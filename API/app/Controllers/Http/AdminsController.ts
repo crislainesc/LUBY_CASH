@@ -33,7 +33,7 @@ export default class AdminsController {
   public async show({ response, auth }: HttpContextContract) {
     const { id } = await auth.use('api').authenticate()
 
-    const admin = await User.findOrFail('id', id)
+    const admin = await User.findByOrFail('id', id)
 
     return response.ok(admin)
   }
