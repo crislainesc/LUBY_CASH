@@ -4,6 +4,7 @@ import {
     createClient,
     deleteClient,
     getAllClients,
+    getClientByCpf,
     getClientById,
     updateClient,
 } from '../app/Controllers/ClientsController';
@@ -15,6 +16,8 @@ router.post('/', createClient);
 router.get('/', getAllClients);
 
 router.get('/:id', getClientById);
+
+router.get('/:cpf_number', getClientByCpf);
 
 router.put('/:id', updateClient);
 

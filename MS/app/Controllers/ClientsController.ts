@@ -20,7 +20,9 @@ export const createClient: RequestHandler = async (request, response, next) => {
         zipcode: request.body.zipcode,
         current_balance: 0,
         average_salary: request.body.average_salary,
-        status: 'desaproved',
+        status: 'disapproved',
+        created_at: new Date(),
+        updated_at: new Date(),
     };
 
     if (average_salary >= 500) {
@@ -69,10 +71,22 @@ export const getClientById: RequestHandler = async (
     return response.status(200).json(client);
 };
 
+export const getClientByCpf: RequestHandler = async (
+    request,
+    response,
+    next
+) => {
+    const {cpf_number} = request.params;
+
+    const client: Client | null = await Client.findOne({ where: { 'cpf_number': cpf_number } });
+
+    return response.status(200).json(client);
+};
+
 export const updateClient: RequestHandler = async (request, response, next) => {
     const {id} = request.params;
 
-    await Client.update({...request.body}, {where: {id}});
+    await Client.update({...request.body, updated_at: new Date()}, {where: {id}});
 
     const updatedClient: Client | null = await Client.findByPk(id);
 
