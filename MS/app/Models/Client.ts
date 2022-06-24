@@ -76,4 +76,16 @@ export class Client extends Model {
         allowNull: false,
     })
     status!: string;
+
+    @Column({
+        type: DataType.DATE,
+        allowNull: false,
+    })
+    created_at!: string;
+
+    @Column({
+        type: DataType.DATE,
+        allowNull: false,
+    })
+    updated_at!: string;
 }
