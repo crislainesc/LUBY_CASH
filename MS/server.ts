@@ -5,6 +5,13 @@ import connection from './config/database';
 
 import clientsRoutes from './routes/clients';
 
+import {
+    runSendMailForNewClient,
+    runSendMailForNewApprovedClient,
+    runSendMailForNewDesaprovedClient,
+    runSendMailForNewPix,
+} from './kafka';
+
 const PORT = process.env.PORT || 4000;
 const HOSTNAME = process.env.HOSTNAME || 'http://localhost';
 
@@ -39,3 +46,8 @@ connection
 app.listen(PORT, () => {
     console.log(`Server running successfully ${HOSTNAME}:${PORT}`);
 });
+
+runSendMailForNewClient().catch((error) => console.log(error));
+runSendMailForNewApprovedClient().catch((error) => console.log(error));
+runSendMailForNewDesaprovedClient().catch((error) => console.log(error));
+runSendMailForNewPix().catch((error) => console.log(error));
