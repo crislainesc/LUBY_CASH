@@ -8,7 +8,7 @@ import clientsRoutes from './routes/clients';
 import {
     runSendMailForNewClient,
     runSendMailForNewApprovedClient,
-    runSendMailForNewDesaprovedClient,
+    runSendMailForNewDisapprovedClient,
     runSendMailForNewPix,
 } from './kafka';
 
@@ -49,5 +49,5 @@ app.listen(PORT, () => {
 
 runSendMailForNewClient().catch((error) => console.log(error));
 runSendMailForNewApprovedClient().catch((error) => console.log(error));
-runSendMailForNewDesaprovedClient().catch((error) => console.log(error));
+runSendMailForNewDisapprovedClient().catch((error) => console.log(error));
 runSendMailForNewPix().catch((error) => console.log(error));

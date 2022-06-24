@@ -32,7 +32,7 @@ export const sendMailForNewApprovedClient = async (
     transport.sendMail(message);
 };
 
-export const sendMailForNewDesaprovedClient = async (
+export const sendMailForNewDisapprovedClient = async (
     email: string,
     username: string,
     status: string

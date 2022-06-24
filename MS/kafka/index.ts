@@ -3,7 +3,7 @@ import {Kafka} from 'kafkajs';
 import {
     sendMailForNewClient,
     sendMailForNewApprovedClient,
-    sendMailForNewDesaprovedClient,
+    sendMailForNewDisapprovedClient,
     sendMailForNewPix,
 } from './trasport';
 
@@ -18,7 +18,7 @@ const adminsTopics = {
 
 const clientsTopics = {
     approved: 'sendEmailToApprovedClient',
-    desaproved: 'sendEmailToDesaprovedClient',
+    disapproved: 'sendEmailToDisapprovedClient',
     newPix: 'sendEmailToNewPix',
 };
 
@@ -50,14 +50,14 @@ export const runSendMailForNewApprovedClient = async () => {
     });
 };
 
-export const runSendMailForNewDesaprovedClient = async () => {
+export const runSendMailForNewDisapprovedClient = async () => {
     await consumer_client.connect();
-    await consumer_client.subscribe({topic: clientsTopics.desaproved});
+    await consumer_client.subscribe({topic: clientsTopics.disapproved});
     await consumer_client.run({
         eachMessage: async ({message}) => {
             const {messageData} = JSON.parse(message.value!.toString());
             const {email, username, status} = messageData;
-            sendMailForNewDesaprovedClient(email, username, status);
+            sendMailForNewDisapprovedClient(email, username, status);
         },
     });
 };
