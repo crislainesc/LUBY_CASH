@@ -20,6 +20,8 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 import 'App/Modules/Admin/routes'
+import 'App/Modules/Client/routes'
+import 'App/Modules/Pix/routes'
 
-
-Route.post('/login', 'AuthController.login')
+Route.post('/admin/login', 'AuthController.loginAdmin')
+Route.post('/client/login', 'AuthController.loginClient')
