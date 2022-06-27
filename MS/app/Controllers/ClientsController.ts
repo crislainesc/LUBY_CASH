@@ -1,4 +1,4 @@
-import {RequestHandler} from 'express';
+import {RequestHandler, response} from 'express';
 
 import bcrypt from 'bcrypt';
 
@@ -78,7 +78,9 @@ export const getClientByCpf: RequestHandler = async (
 ) => {
     const {cpf_number} = request.params;
 
-    const client: Client | null = await Client.findOne({ where: { 'cpf_number': cpf_number } });
+    const client = await Client.findOne({
+        where: {cpf_number: cpf_number},
+    });
 
     return response.status(200).json(client);
 };
@@ -86,9 +88,71 @@ export const getClientByCpf: RequestHandler = async (
 export const updateClient: RequestHandler = async (request, response, next) => {
     const {id} = request.params;
 
-    await Client.update({...request.body, updated_at: new Date()}, {where: {id}});
+    await Client.update(
+        {...request.body, updated_at: new Date()},
+        {where: {id}}
+    );
 
     const updatedClient: Client | null = await Client.findByPk(id);
 
     return response.status(200).json(updatedClient);
+};
+
+export const verifyCredentials: RequestHandler = async (
+    request,
+    response,
+    next
+) => {
+    const {email, password} = request.body;
+
+    const client: Client | null = await Client.findOne({
+        where: {email: email},
+    });
+
+    const comparePasswords = await bcrypt.compare(password, client!.password);
+
+    if (comparePasswords) {
+        return response.status(200).json(client);
+    } else {
+        return response.status(200).json(null);
+    }
+};
+
+export const sendPix: RequestHandler = async (request, response, next) => {
+    const {cpf_sender, cpf_receiver, amount} = request.body;
+
+    const sender = await Client.findOne({where: {cpf_number: cpf_sender}});
+
+    const receiver = await Client.findOne({where: {cpf_number: cpf_receiver}});
+
+    if (sender!.current_balance < amount) {
+        return response.status(200).json({
+            message:
+                'Unable to perform the pix. The amount is greater than the available balance. No amounts have been deducted.',
+        });
+    }
+
+    if (
+        sender!.status === 'disapproved' ||
+        receiver!.status === 'disapproved'
+    ) {
+        return response.status(200).json({
+            message:
+                'These customers are not authorized to perform this type of service.',
+        });
+    }
+
+    await Client.update(
+        {current_balance: sender!.current_balance - amount},
+        {where: {id: sender!.id}}
+    );
+
+    await Client.update(
+        {current_balance: receiver!.current_balance + amount},
+        {where: {id: receiver!.id}}
+    );
+
+    return response
+        .status(201)
+        .json({message: 'Transfer performed successfully'});
 };
